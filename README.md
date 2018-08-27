@@ -62,7 +62,9 @@ C11-->|input|D2
 - 归一化，加权平均
 
 ==**最终**==
+
 ![](https://gitee.com/hailinli/blogNote/raw/master/%E5%85%B6%E4%BB%96/%E8%8D%A3%E5%B2%A9%E8%AE%BA%E6%96%87/README_md_2.jpg)
+
 1. 医学单词词频-->UMLS语料库
 2. 医学词根词频 --> 医学单词词频
 
