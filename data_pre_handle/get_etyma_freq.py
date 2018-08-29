@@ -80,5 +80,5 @@ def get_word_etyma():
 
 if __name__ == "__main__":
     init_logging()
-    # get_etyma_freq()
+    get_etyma_freq()
     get_word_etyma()

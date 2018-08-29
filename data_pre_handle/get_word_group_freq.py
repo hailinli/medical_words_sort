@@ -33,7 +33,7 @@ def deal_word_group():
         # i += 1
         # if i > 1000:
         #     break
-
+    util.mk_dirname(MEDICAL_WORD_GROUP_FREQ)
     with open(MEDICAL_WORD_GROUP_FREQ, 'w') as werrf:
         json.dump(word_group, werrf)
     logging.info('词组词汇频率文件处理成功')
@@ -71,5 +71,5 @@ def get_word_group_freq():
 
 if __name__ == "__main__":
     init_logging()
-    # deal_word_group()
+    deal_word_group()
     get_word_group_freq()
