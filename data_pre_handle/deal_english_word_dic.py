@@ -53,4 +53,4 @@ def deal_medical_dict():
 
 if __name__ == "__main__":
     init_logging()
-    deal_medical_etyma()
+    deal_medical_dict()

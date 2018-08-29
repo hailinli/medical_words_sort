@@ -29,6 +29,7 @@ def deal_word_frequency_data():
 
     # 读取英汉医学大词典的单词
     words = set(dd.deal_medical_dict())
+    # print(words)
 
     for line in inf:
         line= line.strip()
@@ -39,7 +40,7 @@ def deal_word_frequency_data():
         word_freq_info[1] = word_freq_info[1].replace(END_WORD_FREQ,'')
         if word_freq_info[1] == '0':
             continue
-        if not word_freq_info[1] in words:
+        if not word_freq_info[0] in words:
             continue
         word_freq[word_freq_info[0]] = int(word_freq_info[1])
 
