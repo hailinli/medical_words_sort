@@ -16,10 +16,11 @@ logger = logging.getLogger()  # 获取日志logger
 RE = [r'[a-zA-Z\-]+']
 
 
-def deal_medical_etyma():
+def deal_medical_dict():
     """
     :return:
     """
+    medical_words = []
     open_ret, inf = util.open_file_r(MEDICAL_WORDS_DIC)
     # etymas = dict()
     if open_ret == RET_FAIL:
@@ -39,7 +40,9 @@ def deal_medical_etyma():
                     continue
                 if '-' in g:
                     continue
-                print(g)
+                # print(g)
+                medical_words.append(g)
+    return medical_words
 
     # util.mk_dirname(MEDICAL_ETYMA_PRE)
     # with open(MEDICAL_ETYMA_PRE, 'w') as f:
