@@ -12,7 +12,7 @@ from log import init_logging
 import util
 
 logger = logging.getLogger()  # 获取日志logger
-
+MERGE_WORD_WORDGROUP_WEIGHT = [0.01, 0.99]
 
 class Deal:
 
@@ -121,8 +121,10 @@ class Deal:
 
         :return:
         """
+        # print(self.word)
         if not self.word in self.wed:
             return False
+
         etyma_t = self.wed[self.word]  # 找打单词的词缀
         if len(self.ewd[etyma_t]) == 0:  # 如果该单词没有同词缀单词
             return False
@@ -149,9 +151,26 @@ class Deal:
                 tl.remove(s)
         return ''
 
+
+    def _merge_wordfreq_wgfreq(self, wf_tmp, wg_tmp):
+        """
+        融合构词能力和词组频率
+        :param wf_tmp: 词频
+        :param wg_tmp: 词组频
+        """
+        merge_d = dict()
+        for wf_i in wf_tmp:
+            if wf_i in wg_tmp:  # 如果该词有词组评率
+                merge_d[wf_i] = wf_tmp[wf_i] * MERGE_WORD_WORDGROUP_WEIGHT[0]  \
+                                + wg_tmp[wf_i] * MERGE_WORD_WORDGROUP_WEIGHT[1]
+            else:
+                merge_d[wf_i] = wf_tmp[wf_i] * MERGE_WORD_WORDGROUP_WEIGHT[0] * 2
+        return merge_d
+
+
     def deal_has_same_etyma_word(self):
         """
-        从同词缀单词集合,选择最合适的
+
         :return:
         """
         wg_tmp = {}
@@ -159,26 +178,23 @@ class Deal:
         for w in self.ewd[self.word_etyma]:  # 找到同词缀的单词
             if w in self.ret_set:
                 continue
-
             if w in self.wgfu:
                 wg_tmp[w] = self.wgfu[w]  # 单词-词组频率,构词能力
             if w in self.wfd:
                 wf_tmp[w] = self.wfd[w]  # 统计单词频率
-        t1 = self.find_first_few(wf_tmp, 2)  # 找到词频最高同词缀的两个词
-        t2 = self.find_first_few(wg_tmp, 2)  # 找到构词能力最好的同词缀两个词
-        if len(t1) > 0:  # 先看频率最高的同词缀单词
-            return t1[0][1]
-        elif len(t2) > 0:  # 再看构词能力最高的同词缀单词
-            return t2[0][1]
-        else:  # 否则随机选一个
-            return self.random_select(self.ewd[self.word_etyma])  #
+        if len(wg_tmp) == 0 and len(wf_tmp) == 0:
+            return []
+        merge_tmp = self._merge_wordfreq_wgfreq(wf_tmp, wg_tmp)
+        t = self.find_first_few(merge_tmp, 2)  # 找到融合分值最高的两个词
+        # print(t)
+        return t
 
     def deal_has_diff_etyma_word(self):
         """
 
         :return:
         """
-        return ''
+        return []
 
     def get_next(self):
         """
@@ -191,6 +207,22 @@ class Deal:
             return self.deal_has_same_etyma_word()  # 处理同词缀单词
         else:
             return self.deal_has_diff_etyma_word()  # 处理不同词缀
+
+
+    def sort_by_word_len(self, word_list):
+        """
+        根据词汇长度排序,音节数
+        :param word_list:
+        :return:
+        """
+        word_dict = dict()
+        for word in word_list:
+            word_dict[word] = len(word)
+        sort_list2 = self.find_first_few(word_dict, len(word_dict))
+        sort_list = list(map(lambda x:x[1], sort_list2))
+        # print(sort_list, 'sort_list')
+        return sort_list
+
 
     def sort(self):
         """
@@ -205,20 +237,39 @@ class Deal:
         self.ret_set.add(start_word)
         ret_list.append(start_word)
         while True:
-            nw = self.get_next()
-            if nw == '':
-                nw = self.get_and_rm_word_freq_most()
-                if nw == '':
-                    continue
-            if not nw in self.ret_set:
-                self.ret_set.add(nw)
-                ret_list.append(nw)
-                # print(nw)
-                # print(self.ret_set)
-            self.word = nw
-            # break
-            i += 1
-            print(nw, self.wfd[nw], i)
+            nw = self.get_next()  # 2个
+            # print(nw)
+            if len(nw) == 0:  # 没找到结果
+                start_a = self.get_and_rm_word_freq_most()
+                if start_a == '':
+                    break
+                self.word = start_a
+                self.ret_set.add(start_a)
+                ret_list.append(start_a)
+
+                i += 1
+                print(start_a, self.wfd[start_a], i)
+                continue
+
+            ret_result = []
+            for nw_i in nw:
+                # 有效排序结果
+                if not nw_i in self.ret_set:
+                    ret_result.append(nw_i)
+
+            # 按音节数排序
+            useful = list(map(lambda x:x[1], ret_result))
+            sort_ret = self.sort_by_word_len(useful)
+            # print('sort_ret', sort_ret)
+            for word in sort_ret:
+                self.ret_set.add(word)
+                ret_list.append(word)
+                i += 1
+                # print(word,'word sort in')
+                print(word, self.wfd[word], i)
+            if len(sort_ret) != 0:
+                self.word = sort_ret[0]
+
         print(ret_list)
 
 if __name__ == '__main__':
