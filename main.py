@@ -271,6 +271,7 @@ class Deal:
                 self.word = sort_ret[0]
 
         print(ret_list)
+        util.write_file(MEDICAL_SORT_RET, '\n'.join(ret_list))
 
 if __name__ == '__main__':
     # 初始化日志, 配置了基本的logger

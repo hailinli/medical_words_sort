@@ -31,6 +31,8 @@ MEDICAL_WORD_GROUP_FREQ_USE  = '%s/data_pre_handle/词组各词频率表(useful)
 
 NANFANG_SENTENCE_PATH = '%s/医学英语资源-非压缩版/南方科技大学英汉双语平行语料库双语例句(1)-(19)' % MEDICAL_WORDS_SORT_ROOT
 
+MEDICAL_SORT_RET = '%s/data_pre_handle/sort_result.txt' % MEDICAL_WORDS_SORT_ROOT
+
 # 配置返回状态
 RET_SUCC = 0
 RET_FAIL = -1
