@@ -12,7 +12,7 @@ from log import init_logging
 import util
 
 logger = logging.getLogger()  # 获取日志logger
-MERGE_WORD_WORDGROUP_WEIGHT = [0.01, 0.99]
+MERGE_WORD_WORDGROUP_WEIGHT = [0.4, 0.6]
 
 class Deal:
 
@@ -192,7 +192,7 @@ class Deal:
     def deal_has_diff_etyma_word(self):
         """
 
-        :return:
+        :return: 处理没有词根词缀的词
         """
         return []
 
@@ -268,7 +268,11 @@ class Deal:
                 # print(word,'word sort in')
                 print(word, self.wfd[word], i)
             if len(sort_ret) != 0:
-                self.word = sort_ret[0]
+                # self.word = sort_ret[0]
+                start_a = self.get_and_rm_word_freq_most()
+                if start_a == '':
+                    break
+                self.word = start_a
 
         print(ret_list)
         util.write_file(MEDICAL_SORT_RET, '\n'.join(ret_list))
