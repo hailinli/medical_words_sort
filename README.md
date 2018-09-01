@@ -1,3 +1,7 @@
+## 结果
+该结果为 同词缀， 频率,构词能力merge后按音节数排序的结果，但是貌似排序结果被频率和词缀左右了。
+[sort_result_1.txt](data_pre_handle/sort_result_1.txt)
+[sort_result_2.txt](data_pre_handle/sort_result_2.txt)
 ## 需求
 ![](https://gitee.com/hailinli/blogNote/raw/master/%E5%85%B6%E4%BB%96/%E8%8D%A3%E5%B2%A9%E8%AE%BA%E6%96%87/README_md_1.png)
 ## 数据
