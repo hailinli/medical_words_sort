@@ -30,6 +30,11 @@ class Deal:
         self.ret_set = set()  # 记录已经排好序的词汇集合
         self.word_freq_order_dict = []  # 词频按顺序保存,方便拿去最高频率的词,拿掉的马上删掉
         self.fill_word_freq_order_dict()
+        self.merge_wf_wgf = dict()
+        self.merge_wf_wgf = self._merge_wordfreq_wgfreq(self.wfd, self.wgfu)  # merge 词频与词组频率
+        self.word_merge_freq_order_dict = dict()  # merge后排序
+        self.fill_word_merge_freq_order_dict()
+
 
     def load_word_etyma(self):
         """
@@ -100,10 +105,16 @@ class Deal:
         :param tmp_dict:
         :return:
         """
-        f = zip(self.wfd.values(), self.wfd.keys())
-        f = list(f)
-        sorted(f)
-        self.word_freq_order_dict = f
+
+        self.word_freq_order_dict =  self.find_first_few(self.wfd, len(self.wfd))
+
+
+    def fill_word_merge_freq_order_dict(self):
+        """
+
+        :return:
+        """
+        self.word_merge_freq_order_dict =  self.find_first_few(self.merge_wf_wgf, len(self.merge_wf_wgf))
 
     def get_and_rm_word_freq_most(self):
         """
@@ -171,7 +182,7 @@ class Deal:
     def deal_has_same_etyma_word(self):
         """
 
-        :return:
+        :return: 返回值是[(word,34),(word2,4456)]
         """
         wg_tmp = {}
         wf_tmp = {}
@@ -186,15 +197,34 @@ class Deal:
             return []
         merge_tmp = self._merge_wordfreq_wgfreq(wf_tmp, wg_tmp)
         t = self.find_first_few(merge_tmp, 2)  # 找到融合分值最高的两个词
-        # print(t)
+        # print('deal_has_same_etyma_word', t)
         return t
+
 
     def deal_has_diff_etyma_word(self):
         """
 
-        :return: 处理没有词根词缀的词
+        :return: 处理没有词根词缀的词,找到构词能力和频率最高词merge最高分
         """
-        return []
+        # print(self.merge_wf_wgf)  # {'method': 496261.2, 'device': 577184.8}
+        # print(self.word_merge_freq_order_dict)  # [(345653.60000000003, 'signal'), (339355.00000000006, 'data')]
+        words = []
+
+        while True:
+            if len(self.word_merge_freq_order_dict) == 0:
+                break
+            t = self.word_merge_freq_order_dict[0]  # 取得融合分值最高的1个
+            del(self.word_merge_freq_order_dict[0])
+            if t[1] in self.ret_set:
+                continue
+            words.append(t)
+            if len(words) >= 2:
+                break
+        # print(self.word_merge_freq_order_dict[:3])
+        self.word_merge_freq_order_dict = words + self.word_merge_freq_order_dict  # 恢复词典
+        # print(words)
+        return words
+
 
     def get_next(self):
         """
